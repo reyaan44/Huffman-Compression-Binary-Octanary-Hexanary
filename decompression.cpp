@@ -1,13 +1,7 @@
 // Code by Reyaan Jagnani (reyaan44)
 #include<bits/stdc++.h>
-#define ll long long int
-#define ff first
-#define ss second
-#define all(x) (x).begin(), (x).end()
-#define pb push_back
 #define endl "\n"
 #define quick ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define timetaken cerr<<fixed<<setprecision(10); cerr << "time taken : " << (float)clock() / CLOCKS_PER_SEC << " secs" << endl
 using namespace std;
 
 void set_file_name(string original, string &name)
@@ -17,7 +11,7 @@ void set_file_name(string original, string &name)
     {
         if(original[i]=='-')
             break;
-        name.pb(original[i]);
+        name.push_back(original[i]);
     }
 }
 
@@ -67,7 +61,7 @@ int main(int argc, char *argv[])
         for(int i=0; i<input_file_name_sz; i++)
         {
             fread(buff, 1, 1, input_file);
-            output_argument.pb(buff[0]);
+            output_argument.push_back(buff[0]);
         }
 
         FILE *output_file = fopen(output_argument.c_str(), "w");
@@ -97,7 +91,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                codes_mapping.pb(buff[0]);
+                codes_mapping.push_back(buff[0]);
                 null = 0;
             }
         }
@@ -114,7 +108,7 @@ int main(int argc, char *argv[])
             string num = dec_to_bin(buff[0]);
             for(int i=0; i<8; i++)
             {
-                s.pb(num[i]);
+                s.push_back(num[i]);
                 if(decode_map.find(s)!=decode_map.end())
                 {
                     fwrite(&decode_map[s], 1, 1, output_file);
@@ -122,6 +116,7 @@ int main(int argc, char *argv[])
                 }
             }
         }
+        
         fclose(input_file);
         fclose(output_file);
 
@@ -131,12 +126,14 @@ int main(int argc, char *argv[])
     return 0;
 }
 /*
-3txt
-a0011NULL
+File Type : 
+
+3txt (3 is the size of the type, and txt is the type of file)
+a0011NULL (a is character, 0011 is variable length code, NULL is to know that one character has ended)
 b0101NULL
 c0011NULL
-NULL
-padding
-NULL
-000000000 11111111 00000000 11111111
+NULL      (NULL if appears twice, we know the codes are ended)
+padding   (Padding)
+NULL      (Null to know Padding is over)
+000000000 11111111 00000000 11111111 (The data)
 */

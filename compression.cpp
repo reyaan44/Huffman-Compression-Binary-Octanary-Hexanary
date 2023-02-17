@@ -1,16 +1,12 @@
 // Code by Reyaan Jagnani (reyaan44)
 #include<bits/stdc++.h>
-#define ll long long int
-#define ff first
-#define ss second
-#define all(x) (x).begin(), (x).end()
-#define pb push_back
 #define endl "\n"
 #define quick ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define timetaken cerr<<fixed<<setprecision(10); cerr << "time taken : " << (float)clock() / CLOCKS_PER_SEC << " secs" << endl
 using namespace std;
-const ll tree = 2;
-ll log_sz_of_tree = 0;
+
+// 2 - Binary, 4 - Quadnary, 8 - Octanary, 16 - Hexanary....
+const int tree = 2;
+int log_sz_of_tree = 0;
 
 void pre()
 {
@@ -30,16 +26,16 @@ void set_file_name_type(string original, string &name, string &type)
         else
         {
             if(check)
-                name.pb(original[i]);
+                name.push_back(original[i]);
             else
-                type.pb(original[i]);
+                type.push_back(original[i]);
         }
     }    
 }
 
 void write(FILE *output, string s)
 {
-    ll n = s.size();
+    int n = s.size();
     fwrite(s.c_str(), 1, n, output);
 }
 
@@ -113,6 +109,8 @@ void dfs(node* &root, string &s, unordered_map<char,string> &m)
 int main(int argc, char *argv[])
 {
     quick;
+
+    // find the toal bits that we will add in every step of the tree dfs
     pre();
 
     // opening the input file using command line argument
@@ -146,25 +144,31 @@ int main(int argc, char *argv[])
         // Take the complete data into a string
         string input_data_char = "", input_data_bin = "";
         char buff[1];
+
+        // find the frequency of the characters
         unordered_map<char,int> frequency;
         while(fread(buff, 1, 1, input_file))
         {
             frequency[buff[0]]++;
             input_data_char.push_back(buff[0]);
         }
+        // close the file to free the resources
         fclose(input_file);
 
         // make a huffman tree
         priority_queue<pair<int,node*>, vector<pair<int,node*>>, greater<pair<int,node*>>> min_heap;
+        // new variable length codes for all characters
         unordered_map<char,string> code_to_string_mapping;
         node* root;
         for(auto itr: frequency)
         {
             node* temp = new node(itr.first, itr.second);
+            // adding all the nodes in the min_heap
             min_heap.push({itr.second,temp});
         }
         while(min_heap.size()>0)
         {
+            // we have found the root node
             if(min_heap.size()==1)
             {
                 root = min_heap.top().second;
@@ -173,6 +177,7 @@ int main(int argc, char *argv[])
             }
             vector<node*> node_pack;
             int total_frequecies = 0;
+            // taking all the children as per the tree type
             while(min_heap.size()>0 && node_pack.size()<tree)
             {
                 node* curr_node = min_heap.top().second;
@@ -186,25 +191,22 @@ int main(int argc, char *argv[])
         }
 
         string s = "";
+        // finding all the code string mappings
         dfs(root, s, code_to_string_mapping);
 
+        // taking the data in the input_data_bin in binary
         for(int i=0; i<input_data_char.size(); i++)
             input_data_bin += code_to_string_mapping[input_data_char[i]];
-        // padding
+
+        // padding so the size of the file during reading is divisible by 8, so we can take out 1 byte at a time
         int padding = 0;
         while((input_data_bin.size())%8)
         {
-            input_data_bin.pb('0');
+            input_data_bin.push_back('\0');
             padding++;
         }
 
-        /*
-        write codes in input_file, in the form of
-        a0011'\0'
-        ch
-        code
-        NULL
-        */
+        // write codes in input file
         for(auto itr: code_to_string_mapping)
         {
             string code = itr.first + itr.second;
@@ -243,12 +245,14 @@ int main(int argc, char *argv[])
     return 0;
 }
 /*
-3txt
-a0011NULL
+File Type : 
+
+3txt (3 is the size of the type, and txt is the type of file)
+a0011NULL (a is character, 0011 is variable length code, NULL is to know that one character has ended)
 b0101NULL
 c0011NULL
-NULL
-padding
-NULL
-000000000 11111111 00000000 11111111
+NULL      (NULL if appears twice, we know the codes are ended)
+padding   (Padding)
+NULL      (Null to know Padding is over)
+000000000 11111111 00000000 11111111 (The data)
 */

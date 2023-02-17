@@ -1,0 +1,1 @@
+Write the text you wish to compress in this text file.

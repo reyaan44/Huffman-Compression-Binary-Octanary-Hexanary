@@ -106,14 +106,20 @@ int main(int argc, char *argv[])
         while(fread(buff, 1, 1, input_file))
         {
             string num = dec_to_bin(buff[0]);
-            for(int i=0; i<8; i++)
+            s += num;
+        }
+
+        while(padding-->0)
+            s.pop_back();
+
+        string temp = "";
+        for(int i=0; i<s.size(); i++)
+        {
+            temp.push_back(s[i]);
+            if(decode_map.find(temp)!=decode_map.end())
             {
-                s.push_back(num[i]);
-                if(decode_map.find(s)!=decode_map.end())
-                {
-                    fwrite(&decode_map[s], 1, 1, output_file);
-                    s = "";
-                }
+                fwrite(&decode_map[temp], 1, 1, output_file);
+                temp = "";
             }
         }
         
